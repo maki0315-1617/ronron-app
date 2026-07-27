@@ -162,13 +162,20 @@ const Calendar = ({ currentUser }) => {
                     >
                       <div style={{ fontWeight: "bold" }}>{d}</div>
 
-                    <select
-                        value={state.mark || ""}
-                        onChange={(e) => handleMarkChange(dateKey, e.target.value)}
-                     style={{
-                        width: "100%",
-                        backgroundColor: markObj ? markObj.color : "#fff",
-                        color: markObj ? "#fff" : "#000",
-                        marginTop: "4px",
-                        }}
-                    >
+                      <select
+  value={state.mark || ""}
+  onChange={(e) => handleMarkChange(dateKey, e.target.value)}
+  style={{
+    width: "100%",
+    backgroundColor: markObj ? markObj.color : "#fff",
+    color: markObj ? "#fff" : "#000",
+    marginTop: "4px",
+  }}
+>
+  <option value="">未選択</option>
+  {MARK_OPTIONS.map((opt) => (
+    <option key={opt.value} value={opt.value}>
+      {opt.label}
+    </option>
+  ))}
+</select>
