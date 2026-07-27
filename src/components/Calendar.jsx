@@ -63,7 +63,6 @@ const Calendar = ({ currentUser }) => {
     return `${year}-${mm}-${dd}`;
   };
 
-  // 現在時刻を "HH:MM" 形式で取得
   const getCurrentTime = () => {
     const now = new Date();
     const hh = now.getHours().toString().padStart(2, "0");
@@ -71,7 +70,6 @@ const Calendar = ({ currentUser }) => {
     return `${hh}:${mm}`;
   };
 
-  // ○×△選択時にデフォルト時間を自動入力
   const handleMarkChange = (dateKey, markValue) => {
     const prev = dayStates[dateKey] || {};
     const newState = {
@@ -79,7 +77,7 @@ const Calendar = ({ currentUser }) => {
       [dateKey]: {
         ...prev,
         mark: markValue,
-        time: prev.time || getCurrentTime(), // 未設定なら現在時刻を入れる
+        time: prev.time || getCurrentTime(),
       },
     };
     setDayStates(newState);
@@ -163,19 +161,53 @@ const Calendar = ({ currentUser }) => {
                       <div style={{ fontWeight: "bold" }}>{d}</div>
 
                       <select
-  value={state.mark || ""}
-  onChange={(e) => handleMarkChange(dateKey, e.target.value)}
-  style={{
-    width: "100%",
-    backgroundColor: markObj ? markObj.color : "#fff",
-    color: markObj ? "#fff" : "#000",
-    marginTop: "4px",
-  }}
->
-  <option value="">未選択</option>
-  {MARK_OPTIONS.map((opt) => (
-    <option key={opt.value} value={opt.value}>
-      {opt.label}
-    </option>
-  ))}
-</select>
+                        value={state.mark || ""}
+                        onChange={(e) =>
+                          handleMarkChange(dateKey, e.target.value)
+                        }
+                        style={{
+                          width: "100%",
+                          backgroundColor: markObj ? markObj.color : "#fff",
+                          color: markObj ? "#fff" : "#000",
+                          marginTop: "4px",
+                        }}
+                      >
+                        <option value="">未選択</option>
+                        {MARK_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+
+                      <input
+                        type="time"
+                        value={state.time || ""}
+                        onChange={(e) =>
+                          handleTimeChange(dateKey, e.target.value)
+                        }
+                        style={{ width: "100%", marginTop: "4px" }}
+                      />
+
+                      <div
+                        style={{
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          color: state.time ? "#000" : "#888",
+                        }}
+                      >
+                        選択時間: {state.time || "未設定"}
+                      </div>
+                    </td>
+                  );
+                })}
+              </tr>
+            )
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default Calendar;
