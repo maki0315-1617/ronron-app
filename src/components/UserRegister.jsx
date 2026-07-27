@@ -1,4 +1,3 @@
-// components/UserRegister.jsx
 import React, { useState } from "react";
 import { registerUser } from "../utils/storage";
 
@@ -22,31 +21,30 @@ const UserRegister = ({ onLogin }) => {
     <div>
       <h2>ユーザ登録画面</h2>
       <form onSubmit={handleSubmit} style={{ maxWidth: "400px" }}>
-        <div style={{ marginBottom: "8px" }}>
-          <label>
-            ユーザ名:
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              style={{ width: "100%" }}
-            />
-          </label>
-        </div>
-        <div style={{ marginBottom: "8px" }}>
-          <label>
-            パスワード:
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={{ width: "100%" }}
-            />
-          </label>
-        </div>
+        <label>
+          ユーザ名:
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            style={{ width: "100%" }}
+          />
+        </label>
+
+        <label>
+          パスワード:
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={{ width: "100%" }}
+          />
+        </label>
+
         <button type="submit">登録</button>
       </form>
-      {message && <p style={{ marginTop: "8px" }}>{message}</p>}
+
+      {message && <p>{message}</p>}
     </div>
   );
 };

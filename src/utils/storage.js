@@ -1,9 +1,6 @@
-// utils/storage.js
-// localStorage を簡易DBとして扱うヘルパー
-
 const USERS_KEY = "ron_calendar_users";
 const CURRENT_USER_KEY = "ron_calendar_current_user";
-const DAY_DATA_PREFIX = "ron_calendar_daydata_"; // + userId
+const DAY_DATA_PREFIX = "ron_calendar_daydata_";
 
 const loadUsers = () => {
   const raw = localStorage.getItem(USERS_KEY);
@@ -23,7 +20,6 @@ export const registerUser = (username, password) => {
   const users = loadUsers();
   const exists = users.find((u) => u.username === username);
   if (exists) {
-    // 既存ユーザは上書きせず、そのまま返す
     localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(exists));
     return exists;
   }
@@ -64,18 +60,19 @@ export const updateUserProfile = (userId, { bio, favoriteColor }) => {
   const users = loadUsers();
   const idx = users.findIndex((u) => u.id === userId);
   if (idx === -1) return null;
+
   const updated = {
     ...users[idx],
     bio,
     favoriteColor,
   };
+
   users[idx] = updated;
   saveUsers(users);
   localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(updated));
   return updated;
 };
 
-// 日付ごとの ○×△ と時間を保存・読み込み
 export const loadDayData = (userId) => {
   const raw = localStorage.getItem(DAY_DATA_PREFIX + userId);
   if (!raw) return {};
