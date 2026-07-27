@@ -63,10 +63,24 @@ const Calendar = ({ currentUser }) => {
     return `${year}-${mm}-${dd}`;
   };
 
+  // 現在時刻を "HH:MM" 形式で取得
+  const getCurrentTime = () => {
+    const now = new Date();
+    const hh = now.getHours().toString().padStart(2, "0");
+    const mm = now.getMinutes().toString().padStart(2, "0");
+    return `${hh}:${mm}`;
+  };
+
+  // ○×△選択時にデフォルト時間を自動入力
   const handleMarkChange = (dateKey, markValue) => {
+    const prev = dayStates[dateKey] || {};
     const newState = {
       ...dayStates,
-      [dateKey]: { ...(dayStates[dateKey] || {}), mark: markValue },
+      [dateKey]: {
+        ...prev,
+        mark: markValue,
+        time: prev.time || getCurrentTime(), // 未設定なら現在時刻を入れる
+      },
     };
     setDayStates(newState);
     if (currentUser) saveDayData(currentUser.id, newState);
@@ -156,47 +170,4 @@ const Calendar = ({ currentUser }) => {
                         style={{
                           width: "100%",
                           backgroundColor: markObj ? markObj.color : "#fff",
-                          color: markObj ? "#fff" : "#000",
-                          marginTop: "4px",
-                        }}
-                      >
-                        <option value="">未選択</option>
-                        {MARK_OPTIONS.map((opt) => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-
-                      <input
-                        type="time"
-                        value={state.time || ""}
-                        onChange={(e) =>
-                          handleTimeChange(dateKey, e.target.value)
-                        }
-                        style={{ width: "100%", marginTop: "4px" }}
-                      />
-
-                      {/* ここで必ず「時分」を表示する */}
-                      <div
-                        style={{
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          color: state.time ? "#000" : "#888",
-                        }}
-                      >
-                        選択時間: {state.time || "未設定"}
-                      </div>
-                    </td>
-                  );
-                })}
-              </tr>
-            )
-          )}
-        </tbody>
-      </table>
-    </div>
-  );
-};
-
-export default Calendar;
+                          color: markObj ?
