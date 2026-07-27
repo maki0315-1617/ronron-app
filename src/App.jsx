@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Calendar from "./components/Calendar";
 import UserRegister from "./components/UserRegister";
 import UserProfile from "./components/UserProfile";
-import { getCurrentUser } from "./utils/storage";
+import { getCurrentUser, logoutUser } from "./utils/storage";
 
 const App = () => {
   const [screen, setScreen] = useState("calendar");
@@ -10,6 +10,12 @@ const App = () => {
 
   const handleLogin = (userObj) => {
     setUser(userObj);
+    setScreen("calendar");
+  };
+
+  const handleLogout = () => {
+    logoutUser();
+    setUser(null);
     setScreen("calendar");
   };
 
@@ -25,10 +31,26 @@ const App = () => {
           style={{ width: "120px", marginBottom: "12px" }}
         />
 
-        <nav style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
+        <nav
+          style={{
+            display: "flex",
+            gap: "8px",
+            marginTop: "8px",
+            alignItems: "center",
+          }}
+        >
           <button onClick={() => setScreen("calendar")}>カレンダー</button>
           <button onClick={() => setScreen("register")}>ユーザ登録</button>
           <button onClick={() => setScreen("profile")}>ユーザ入力</button>
+
+          {user && (
+            <button
+              onClick={handleLogout}
+              style={{ marginLeft: "16px", backgroundColor: "#f44336", color: "#fff" }}
+            >
+              ログアウト
+            </button>
+          )}
         </nav>
 
         <div style={{ marginTop: "8px" }}>

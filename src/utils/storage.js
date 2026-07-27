@@ -56,6 +56,10 @@ export const getCurrentUser = () => {
   }
 };
 
+export const logoutUser = () => {
+  localStorage.removeItem(CURRENT_USER_KEY);
+};
+
 export const updateUserProfile = (userId, { bio, favoriteColor }) => {
   const users = loadUsers();
   const idx = users.findIndex((u) => u.id === userId);

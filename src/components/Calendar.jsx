@@ -177,11 +177,16 @@ const Calendar = ({ currentUser }) => {
                         style={{ width: "100%", marginTop: "4px" }}
                       />
 
-                      {state.time && (
-                        <div style={{ fontSize: "12px", marginTop: "4px" }}>
-                          選択時間: {state.time}
-                        </div>
-                      )}
+                      {/* ここで必ず「時分」を表示する */}
+                      <div
+                        style={{
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          color: state.time ? "#000" : "#888",
+                        }}
+                      >
+                        選択時間: {state.time || "未設定"}
+                      </div>
                     </td>
                   );
                 })}
