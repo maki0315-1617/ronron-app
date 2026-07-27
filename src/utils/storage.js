@@ -41,6 +41,29 @@ export const getCurrentUser = () => {
   return JSON.parse(raw);
 };
 
+// プロフィール更新（bio と favoriteColor）
+export const updateUserProfile = async (userId, { bio, favoriteColor }) => {
+  const { data, error } = await supabase
+    .from("users")
+    .update({
+      bio,
+      favoriteColor,
+    })
+    .eq("id", userId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("プロフィール更新エラー:", error);
+    return null;
+  }
+
+  // ローカルにも保存（ログイン状態維持）
+  localStorage.setItem("current_user", JSON.stringify(data));
+
+  return data;
+};
+
 // 日付データ読み込み
 export const loadDayData = async (userId) => {
   const { data, error } = await supabase
