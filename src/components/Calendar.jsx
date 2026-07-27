@@ -162,12 +162,13 @@ const Calendar = ({ currentUser }) => {
                     >
                       <div style={{ fontWeight: "bold" }}>{d}</div>
 
-                      <select
+                    <select
                         value={state.mark || ""}
-                        onChange={(e) =>
-                          handleMarkChange(dateKey, e.target.value)
-                        }
-                        style={{
-                          width: "100%",
-                          backgroundColor: markObj ? markObj.color : "#fff",
-                          color: markObj ?
+                        onChange={(e) => handleMarkChange(dateKey, e.target.value)}
+                     style={{
+                        width: "100%",
+                        backgroundColor: markObj ? markObj.color : "#fff",
+                        color: markObj ? "#fff" : "#000",
+                        marginTop: "4px",
+                        }}
+                    >
