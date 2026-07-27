@@ -1,92 +1,75 @@
-const USERS_KEY = "ron_calendar_users";
-const CURRENT_USER_KEY = "ron_calendar_current_user";
-const DAY_DATA_PREFIX = "ron_calendar_daydata_";
+import { supabase } from "./supabase";
 
-const loadUsers = () => {
-  const raw = localStorage.getItem(USERS_KEY);
-  if (!raw) return [];
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
+// ユーザ登録
+export const registerUser = async (username, password) => {
+  const { data, error } = await supabase
+    .from("users")
+    .insert([{ username, password }])
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  localStorage.setItem("current_user", JSON.stringify(data));
+  return data;
 };
 
-const saveUsers = (users) => {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+// ログイン
+export const loginUser = async (username, password) => {
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("username", username)
+    .eq("password", password)
+    .single();
+
+  if (error || !data) return null;
+
+  localStorage.setItem("current_user", JSON.stringify(data));
+  return data;
 };
 
-export const registerUser = (username, password) => {
-  const users = loadUsers();
-  const exists = users.find((u) => u.username === username);
-  if (exists) {
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(exists));
-    return exists;
-  }
-  const newUser = {
-    id: Date.now().toString(),
-    username,
-    password,
-    bio: "",
-    favoriteColor: "",
-  };
-  users.push(newUser);
-  saveUsers(users);
-  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(newUser));
-  return newUser;
-};
-
-export const loginUser = (username, password) => {
-  const users = loadUsers();
-  const user = users.find(
-    (u) => u.username === username && u.password === password
-  );
-  if (!user) return null;
-  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-  return user;
-};
-
-export const getCurrentUser = () => {
-  const raw = localStorage.getItem(CURRENT_USER_KEY);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-};
-
+// ログアウト
 export const logoutUser = () => {
-  localStorage.removeItem(CURRENT_USER_KEY);
+  localStorage.removeItem("current_user");
 };
 
-export const updateUserProfile = (userId, { bio, favoriteColor }) => {
-  const users = loadUsers();
-  const idx = users.findIndex((u) => u.id === userId);
-  if (idx === -1) return null;
-
-  const updated = {
-    ...users[idx],
-    bio,
-    favoriteColor,
-  };
-
-  users[idx] = updated;
-  saveUsers(users);
-  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(updated));
-  return updated;
+// 現在ユーザ取得
+export const getCurrentUser = () => {
+  const raw = localStorage.getItem("current_user");
+  if (!raw) return null;
+  return JSON.parse(raw);
 };
 
-export const loadDayData = (userId) => {
-  const raw = localStorage.getItem(DAY_DATA_PREFIX + userId);
-  if (!raw) return {};
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return {};
-  }
+// 日付データ読み込み
+export const loadDayData = async (userId) => {
+  const { data, error } = await supabase
+    .from("day_data")
+    .select("*")
+    .eq("user_id", userId);
+
+  if (error) return {};
+
+  const result = {};
+  data.forEach((row) => {
+    result[row.date_key] = { mark: row.mark, time: row.time };
+  });
+
+  return result;
 };
 
-export const saveDayData = (userId, data) => {
-  localStorage.setItem(DAY_DATA_PREFIX + userId, JSON.stringify(data));
+// 日付データ保存
+export const saveDayData = async (userId, dayStates) => {
+  const rows = Object.entries(dayStates).map(([date_key, v]) => ({
+    user_id: userId,
+    date_key,
+    mark: v.mark || null,
+    time: v.time || null,
+  }));
+
+  // 既存削除
+  await supabase.from("day_data").delete().eq("user_id", userId);
+
+  // 新規保存
+  await supabase.from("day_data").insert(rows);
 };

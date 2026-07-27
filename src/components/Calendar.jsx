@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { saveDayData, loadDayData } from "../utils/storage";
+import { loadDayData, saveDayData } from "../utils/storage";
 
 const MIN_YEAR = 2026;
 const MIN_MONTH = 6; // 7月
@@ -17,10 +17,16 @@ const Calendar = ({ currentUser }) => {
   const [month, setMonth] = useState(6);
   const [dayStates, setDayStates] = useState({});
 
+  // Supabase から読み込み
   useEffect(() => {
     if (!currentUser) return;
-    const data = loadDayData(currentUser.id);
-    setDayStates(data || {});
+
+    const load = async () => {
+      const data = await loadDayData(currentUser.id);
+      setDayStates(data || {});
+    };
+
+    load();
   }, [currentUser]);
 
   const changeMonth = (delta) => {
@@ -70,7 +76,7 @@ const Calendar = ({ currentUser }) => {
     return `${hh}:${mm}`;
   };
 
-  const handleMarkChange = (dateKey, markValue) => {
+  const handleMarkChange = async (dateKey, markValue) => {
     const prev = dayStates[dateKey] || {};
     const newState = {
       ...dayStates,
@@ -80,17 +86,25 @@ const Calendar = ({ currentUser }) => {
         time: prev.time || getCurrentTime(),
       },
     };
+
     setDayStates(newState);
-    if (currentUser) saveDayData(currentUser.id, newState);
+
+    if (currentUser) {
+      await saveDayData(currentUser.id, newState);
+    }
   };
 
-  const handleTimeChange = (dateKey, timeValue) => {
+  const handleTimeChange = async (dateKey, timeValue) => {
     const newState = {
       ...dayStates,
       [dateKey]: { ...(dayStates[dateKey] || {}), time: timeValue },
     };
+
     setDayStates(newState);
-    if (currentUser) saveDayData(currentUser.id, newState);
+
+    if (currentUser) {
+      await saveDayData(currentUser.id, newState);
+    }
   };
 
   const cells = buildCalendar();
