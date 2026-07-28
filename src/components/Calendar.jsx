@@ -6,7 +6,7 @@ const MIN_MONTH = 6;
 const MAX_YEAR = 2030;
 const MAX_MONTH = 11;
 
-// 🎀 絵文字を大量追加
+// 絵文字マーク大量追加
 const MARK_OPTIONS = [
   { value: "paw", label: "🐾", color: "#ffb3c6" },
   { value: "sleep", label: "💤", color: "#b3d9ff" },
@@ -14,16 +14,28 @@ const MARK_OPTIONS = [
   { value: "rainbow", label: "🌈", color: "#ffd6ff" },
   { value: "sparkle", label: "✨", color: "#fff7b3" },
   { value: "cat", label: "🐱", color: "#d6eaff" },
-
-  // 食べ物シリーズ
   { value: "food1", label: "🍎", color: "#ffcccc" },
   { value: "food2", label: "🍔🍟", color: "#ffe0b3" },
   { value: "food3", label: "🍓🍰🍫", color: "#ffd6e8" },
-
-  // 病院・ケーキ
   { value: "hospital", label: "🏥", color: "#e0f7ff" },
   { value: "cake", label: "🎂", color: "#ffe5f0" },
 ];
+
+// 季節背景画像
+const SEASON_BG = {
+  spring: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e",
+  summer: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+  autumn: "https://images.unsplash.com/photo-1501973801540-537f08ccae7b",
+  winter: "https://images.unsplash.com/photo-1518176258769-f227c798150e",
+};
+
+// 月から季節を判定
+const getSeason = (month) => {
+  if (month >= 2 && month <= 4) return "spring"; // 3〜5月
+  if (month >= 5 && month <= 7) return "summer"; // 6〜8月
+  if (month >= 8 && month <= 10) return "autumn"; // 9〜11月
+  return "winter"; // 12〜2月
+};
 
 const Calendar = ({ currentUser }) => {
   const now = new Date();
@@ -125,11 +137,13 @@ const Calendar = ({ currentUser }) => {
   };
 
   const cells = buildCalendar();
+  const season = getSeason(month);
+  const bgImage = SEASON_BG[season];
 
   return (
     <div>
       <h2 className="mb-3">
-        {year}年 {month + 1}月
+        {year}年 {month + 1}月（{season}）
       </h2>
 
       <div className="mb-3">
@@ -152,7 +166,12 @@ const Calendar = ({ currentUser }) => {
             <div
               key={d}
               className="p-3 mb-3 rounded shadow-sm"
-              style={{ backgroundColor: "#fff0f5" }}
+              style={{
+                backgroundImage: `url(${bgImage})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                borderRadius: "15px",
+              }}
             >
               <div
                 className="fw-bold mb-2 text-center"
@@ -236,7 +255,6 @@ const Calendar = ({ currentUser }) => {
                       (m) => m.value === state.mark
                     );
 
-                    // 🎀 休日はピンク背景
                     const isWeekend = i === 0 || i === 6;
 
                     return (
@@ -244,6 +262,9 @@ const Calendar = ({ currentUser }) => {
                         key={i}
                         className="p-2"
                         style={{
+                          backgroundImage: `url(${bgImage})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
                           backgroundColor: isWeekend ? "#ffe5f0" : "#fff0f5",
                           borderRadius: "10px",
                         }}
