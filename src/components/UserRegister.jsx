@@ -1,19 +1,18 @@
 import React, { useState } from "react";
-import { registerUser } from "./storage";
+import { registerUser } from "../utils/storage";
 
-export default function UserRegister() {
+export default function UserRegister({ onLogin }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleRegister = async () => {
-    setErrorMessage(""); // エラー初期化
+    setErrorMessage("");
 
     try {
-      await registerUser(username, password);
-      alert("登録が完了しました！");
+      const user = await registerUser(username, password);
+      onLogin(user);
     } catch (err) {
-      // storage.js からのエラーメッセージを表示
       setErrorMessage(err.message);
     }
   };
@@ -41,7 +40,6 @@ export default function UserRegister() {
 
       <button onClick={handleRegister}>登録</button>
 
-      {/* エラーメッセージ表示 */}
       {errorMessage && (
         <p style={{ color: "red", marginTop: "10px" }}>
           {errorMessage}

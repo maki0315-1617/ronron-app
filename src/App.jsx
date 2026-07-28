@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Calendar from "./components/Calendar";
 import UserRegister from "./components/UserRegister.jsx";
-import UserRegister from "./components/UserRegister";
 import UserProfile from "./components/UserProfile";
 import { getCurrentUser, logoutUser } from "./utils/storage";
 
@@ -25,7 +24,6 @@ const App = () => {
       <header style={{ marginBottom: "16px" }}>
         <h1>ロン君のカレンダー</h1>
 
-        {/* 黒猫ロン君のイラスト */}
         <img
           src="/ron.png"
           alt="黒猫ロン君"
