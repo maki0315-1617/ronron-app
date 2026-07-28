@@ -2,8 +2,7 @@ import { supabase } from "./supabase";
 
 // ユーザ登録（重複チェック付き）
 export const registerUser = async (username, password) => {
-  // ① 既存ユーザチェック
-  const { data: existing, error: checkError } = await supabase
+  const { data: existing } = await supabase
     .from("users")
     .select("*")
     .eq("username", username)
@@ -13,7 +12,6 @@ export const registerUser = async (username, password) => {
     throw new Error("このユーザ名は既に登録されています。");
   }
 
-  // ② 新規登録
   const { data, error } = await supabase
     .from("users")
     .insert([{ username, password }])
@@ -74,32 +72,45 @@ export const updateUserProfile = async (userId, { bio, favoriteColor }) => {
   return data;
 };
 
-// 日付データ読み込み
+// 日付データ読み込み（text 対応）
 export const loadDayData = async (userId) => {
   const { data, error } = await supabase
     .from("day_data")
-    .select("*")
+    .select("date_key, mark, time, text")
     .eq("user_id", userId);
 
-  if (error) return {};
+  if (error) {
+    console.error("loadDayData error:", error);
+    return {};
+  }
 
   const result = {};
   data.forEach((row) => {
-    result[row.date_key] = { mark: row.mark, time: row.time };
+    result[row.date_key] = {
+      mark: row.mark || "",
+      time: row.time || "",
+      text: row.text || "",
+    };
   });
 
   return result;
 };
 
-// 日付データ保存
+// 日付データ保存（UPSERT + text 対応）
 export const saveDayData = async (userId, dayStates) => {
   const rows = Object.entries(dayStates).map(([date_key, v]) => ({
     user_id: userId,
     date_key,
-    mark: v.mark || null,
-    time: v.time || null,
+    mark: v.mark || "",
+    time: v.time || "",
+    text: v.text || "",
   }));
 
-  await supabase.from("day_data").delete().eq("user_id", userId);
-  await supabase.from("day_data").insert(rows);
+  const { error } = await supabase
+    .from("day_data")
+    .upsert(rows, { onConflict: ["user_id", "date_key"] });
+
+  if (error) {
+    console.error("saveDayData error:", error);
+  }
 };
