@@ -14,13 +14,9 @@ const MARK_OPTIONS = [
   { value: "rainbow", label: "🌈", color: "#ffd6ff" },
   { value: "sparkle", label: "✨", color: "#fff7b3" },
   { value: "cat", label: "🐱", color: "#d6eaff" },
-
-  // 食べ物シリーズ
   { value: "food1", label: "🍎", color: "#ffcccc" },
   { value: "food2", label: "🍔🍟", color: "#ffe0b3" },
   { value: "food3", label: "🍓🍰🍫", color: "#ffd6e8" },
-
-  // 病院・ケーキ
   { value: "hospital", label: "🏥", color: "#e0f7ff" },
   { value: "cake", label: "🎂", color: "#ffe5f0" },
 ];
