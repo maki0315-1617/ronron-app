@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { registerUser } from "./storage";
 
-export default function Register() {
+export default function UserRegister() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
