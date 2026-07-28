@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Calendar from "./components/Calendar";
+import UserRegister from "./components/UserRegister.jsx";
 import UserRegister from "./components/UserRegister";
 import UserProfile from "./components/UserProfile";
 import { getCurrentUser, logoutUser } from "./utils/storage";
