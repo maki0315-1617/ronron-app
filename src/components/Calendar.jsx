@@ -6,11 +6,10 @@ const MIN_MONTH = 6;
 const MAX_YEAR = 2030;
 const MAX_MONTH = 11;
 
-// かわいい色に変更
 const MARK_OPTIONS = [
-  { value: "circle", label: "〇", color: "#ffb3c6" },   // ピンク
-  { value: "cross", label: "×", color: "#b3d9ff" },    // 水色
-  { value: "triangle", label: "△", color: "#ffe5b3" }, // クリーム
+  { value: "circle", label: "〇", color: "#ffb3c6" },
+  { value: "cross", label: "×", color: "#b3d9ff" },
+  { value: "triangle", label: "△", color: "#ffe5b3" },
 ];
 
 const Calendar = ({ currentUser }) => {
@@ -129,9 +128,168 @@ const Calendar = ({ currentUser }) => {
         </button>
       </div>
 
-      {/* 📱 スマホ縦長（かわいいカード形式） */}
+      {/* 📱 スマホ縦長 */}
       <div className="d-block d-md-none">
-        {cells
-          .filter((d) => d !== null)
-          .map((d) => {
-            const dateKey =
+        {cells.filter((d) => d !== null).map((d) => {
+          const dateKey = formatDateKey(d);
+          const state = dayStates[dateKey] || {};
+          const markObj = MARK_OPTIONS.find((m) => m.value === state.mark);
+
+          return (
+            <div
+              key={d}
+              className="p-3 mb-3 rounded shadow-sm"
+              style={{ backgroundColor: "#fff0f5" }}
+            >
+              <div
+                className="fw-bold mb-2 text-center"
+                style={{
+                  fontSize: "1.4rem",
+                  backgroundColor: "#ffb3c6",
+                  color: "white",
+                  width: "60px",
+                  margin: "0 auto",
+                  borderRadius: "50px",
+                }}
+              >
+                {d}日
+              </div>
+
+              <select
+                className="form-select mt-2"
+                value={state.mark || ""}
+                onChange={(e) => handleMarkChange(dateKey, e.target.value)}
+                style={{
+                  backgroundColor: markObj ? markObj.color : "white",
+                  borderRadius: "20px",
+                  padding: "10px",
+                }}
+              >
+                <option value="">未選択</option>
+                {MARK_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+
+              <input
+                type="text"
+                className="form-control mt-3"
+                value={state.text || ""}
+                onChange={(e) => handleTextChange(dateKey, e.target.value)}
+                placeholder="メモを書く"
+                style={{
+                  borderRadius: "15px",
+                  backgroundColor: "#ffffff",
+                }}
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 🖥 PC横長 */}
+      <div className="d-none d-md-block">
+        <table className="table table-bordered text-center">
+          <thead>
+            <tr style={{ backgroundColor: "#ffe5f0" }}>
+              <th>日</th>
+              <th>月</th>
+              <th>火</th>
+              <th>水</th>
+              <th>木</th>
+              <th>金</th>
+              <th>土</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {Array.from({ length: Math.ceil(cells.length / 7) }).map(
+              (_, rowIndex) => (
+                <tr key={rowIndex}>
+                  {cells.slice(rowIndex * 7, rowIndex * 7 + 7).map((d, i) => {
+                    if (!d)
+                      return (
+                        <td
+                          key={i}
+                          style={{ backgroundColor: "#fff0f5" }}
+                        ></td>
+                      );
+
+                    const dateKey = formatDateKey(d);
+                    const state = dayStates[dateKey] || {};
+                    const markObj = MARK_OPTIONS.find(
+                      (m) => m.value === state.mark
+                    );
+
+                    return (
+                      <td
+                        key={i}
+                        className="p-2"
+                        style={{
+                          backgroundColor: "#fff0f5",
+                          borderRadius: "10px",
+                        }}
+                      >
+                        <div
+                          className="fw-bold mb-2"
+                          style={{
+                            fontSize: "1.2rem",
+                            backgroundColor: "#ffb3c6",
+                            color: "white",
+                            width: "40px",
+                            margin: "0 auto",
+                            borderRadius: "50px",
+                          }}
+                        >
+                          {d}
+                        </div>
+
+                        <select
+                          className="form-select mt-2"
+                          value={state.mark || ""}
+                          onChange={(e) =>
+                            handleMarkChange(dateKey, e.target.value)
+                          }
+                          style={{
+                            backgroundColor: markObj ? markObj.color : "white",
+                            borderRadius: "20px",
+                            padding: "10px",
+                          }}
+                        >
+                          <option value="">未選択</option>
+                          {MARK_OPTIONS.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+
+                        <input
+                          type="text"
+                          className="form-control mt-2"
+                          value={state.text || ""}
+                          onChange={(e) =>
+                            handleTextChange(dateKey, e.target.value)
+                          }
+                          placeholder="メモを書く"
+                          style={{
+                            borderRadius: "15px",
+                            backgroundColor: "#ffffff",
+                          }}
+                        />
+                      </td>
+                    );
+                  })}
+                </tr>
+              )
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export default Calendar;
