@@ -13,22 +13,20 @@ const MARK_OPTIONS = [
 ];
 
 const Calendar = ({ currentUser }) => {
+  // 初期表示を当月にする
   const now = new Date();
   let initYear = now.getFullYear();
   let initMonth = now.getMonth();
-  
-  // 最小値より前なら補正
+
   if (initYear < MIN_YEAR || (initYear === MIN_YEAR && initMonth < MIN_MONTH)) {
     initYear = MIN_YEAR;
     initMonth = MIN_MONTH;
   }
-  
-  // 最大値より後なら補
   if (initYear > MAX_YEAR || (initYear === MAX_YEAR && initMonth > MAX_MONTH)) {
     initYear = MAX_YEAR;
     initMonth = MAX_MONTH;
   }
-  
+
   const [year, setYear] = useState(initYear);
   const [month, setMonth] = useState(initMonth);
   const [dayStates, setDayStates] = useState({});
@@ -85,13 +83,6 @@ const Calendar = ({ currentUser }) => {
     return `${year}-${mm}-${dd}`;
   };
 
-  const getCurrentTime = () => {
-    const now = new Date();
-    const hh = now.getHours().toString().padStart(2, "0");
-    const mm = now.getMinutes().toString().padStart(2, "0");
-    return `${hh}:${mm}`;
-  };
-
   const handleMarkChange = async (dateKey, markValue) => {
     const prev = dayStates[dateKey] || {};
     const newState = {
@@ -99,7 +90,6 @@ const Calendar = ({ currentUser }) => {
       [dateKey]: {
         ...prev,
         mark: markValue,
-        time: prev.time || getCurrentTime(),
       },
     };
 
@@ -110,10 +100,11 @@ const Calendar = ({ currentUser }) => {
     }
   };
 
-  const handleTimeChange = async (dateKey, timeValue) => {
+  // ★ テキスト入力の保存処理
+  const handleTextChange = async (dateKey, textValue) => {
     const newState = {
       ...dayStates,
-      [dateKey]: { ...(dayStates[dateKey] || {}), time: timeValue },
+      [dateKey]: { ...(dayStates[dateKey] || {}), text: textValue },
     };
 
     setDayStates(newState);
@@ -210,23 +201,25 @@ const Calendar = ({ currentUser }) => {
                         ))}
                       </select>
 
+                      {/* ★ テキスト入力欄 */}
                       <input
-                        type="time"
-                        value={state.time || ""}
+                        type="text"
+                        value={state.text || ""}
                         onChange={(e) =>
-                          handleTimeChange(dateKey, e.target.value)
+                          handleTextChange(dateKey, e.target.value)
                         }
                         style={{ width: "100%", marginTop: "4px" }}
+                        placeholder="メモを入力"
                       />
 
                       <div
                         style={{
                           fontSize: "12px",
                           marginTop: "4px",
-                          color: state.time ? "#000" : "#888",
+                          color: state.text ? "#000" : "#888",
                         }}
                       >
-                        選択時間: {state.time || "未設定"}
+                        入力テキスト: {state.text || "未入力"}
                       </div>
                     </td>
                   );
