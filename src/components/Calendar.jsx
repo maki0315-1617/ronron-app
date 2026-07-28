@@ -13,8 +13,24 @@ const MARK_OPTIONS = [
 ];
 
 const Calendar = ({ currentUser }) => {
-  const [year, setYear] = useState(2026);
-  const [month, setMonth] = useState(6);
+  const now = new Date();
+  let initYear = now.getFullYear();
+  let initMonth = now.getMonth();
+  
+  // 最小値より前なら補正
+  if (initYear < MIN_YEAR || (initYear === MIN_YEAR && initMonth < MIN_MONTH)) {
+    initYear = MIN_YEAR;
+    initMonth = MIN_MONTH;
+  }
+  
+  // 最大値より後なら補正
+  if (initYear > MAX_YEAR || (initYear === MAX_YEAR && initMonth > MAX_MONTH)) {
+    initYear = MAX_YEAR;
+    initMonth = MAX_MONTH;
+  }
+  
+  const [year, setYear] = useState(initYear);
+  const [month, setMonth] = useState(initMonth);
   const [dayStates, setDayStates] = useState({});
 
   // Supabase から読み込み
