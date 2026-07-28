@@ -6,7 +6,7 @@ const MIN_MONTH = 6;
 const MAX_YEAR = 2030;
 const MAX_MONTH = 11;
 
-// 絵文字マーク（従来＋追加）
+// 絵文字マーク
 const MARK_OPTIONS = [
   { value: "paw", label: "🐾", color: "#ffb3c6" },
   { value: "sleep", label: "💤", color: "#b3d9ff" },
@@ -29,12 +29,11 @@ const SEASON_BG = {
   winter: "https://cdn.pixabay.com/photo/2016/11/29/05/08/snowman-1867221_1280.png",
 };
 
-// 月から季節を判定
 const getSeason = (month) => {
-  if (month >= 2 && month <= 4) return "spring"; // 3〜5月
-  if (month >= 5 && month <= 7) return "summer"; // 6〜8月
-  if (month >= 8 && month <= 10) return "autumn"; // 9〜11月
-  return "winter"; // 12〜2月
+  if (month >= 2 && month <= 4) return "spring";
+  if (month >= 5 && month <= 7) return "summer";
+  if (month >= 8 && month <= 10) return "autumn";
+  return "winter";
 };
 
 const Calendar = ({ currentUser }) => {
@@ -167,10 +166,12 @@ const Calendar = ({ currentUser }) => {
               key={d}
               className="p-3 mb-3 rounded shadow-sm"
               style={{
-                backgroundImage: `url(${bgImage})`,
+                backgroundImage: bgImage ? `url("${bgImage}")` : "none",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
                 borderRadius: "15px",
+                minHeight: "180px",
               }}
             >
               <div
@@ -259,11 +260,13 @@ const Calendar = ({ currentUser }) => {
                         key={i}
                         className="p-2"
                         style={{
-                          backgroundImage: `url(${bgImage})`,
+                          backgroundImage: bgImage ? `url("${bgImage}")` : "none",
                           backgroundSize: "cover",
                           backgroundPosition: "center",
+                          backgroundRepeat: "no-repeat",
                           backgroundColor: isWeekend ? "#ffe5f0" : "#fff0f5",
                           borderRadius: "10px",
+                          minHeight: "160px",
                         }}
                       >
                         <div
