@@ -6,11 +6,23 @@ const MIN_MONTH = 6;
 const MAX_YEAR = 2030;
 const MAX_MONTH = 11;
 
-// 🎀 絵文字マークに変更
+// 🎀 絵文字を大量追加
 const MARK_OPTIONS = [
-  { value: "paw", label: "🐾", color: "#ffb3c6" },     // ピンク
-  { value: "sleep", label: "💤", color: "#b3d9ff" },   // 水色
-  { value: "clover", label: "🍀", color: "#ffe5b3" },  // クリーム
+  { value: "paw", label: "🐾", color: "#ffb3c6" },
+  { value: "sleep", label: "💤", color: "#b3d9ff" },
+  { value: "clover", label: "🍀", color: "#ffe5b3" },
+  { value: "rainbow", label: "🌈", color: "#ffd6ff" },
+  { value: "sparkle", label: "✨", color: "#fff7b3" },
+  { value: "cat", label: "🐱", color: "#d6eaff" },
+
+  // 食べ物シリーズ
+  { value: "food1", label: "🍎", color: "#ffcccc" },
+  { value: "food2", label: "🍔🍟", color: "#ffe0b3" },
+  { value: "food3", label: "🍓🍰🍫", color: "#ffd6e8" },
+
+  // 病院・ケーキ
+  { value: "hospital", label: "🏥", color: "#e0f7ff" },
+  { value: "cake", label: "🎂", color: "#ffe5f0" },
 ];
 
 const Calendar = ({ currentUser }) => {
@@ -224,12 +236,15 @@ const Calendar = ({ currentUser }) => {
                       (m) => m.value === state.mark
                     );
 
+                    // 🎀 休日はピンク背景
+                    const isWeekend = i === 0 || i === 6;
+
                     return (
                       <td
                         key={i}
                         className="p-2"
                         style={{
-                          backgroundColor: "#fff0f5",
+                          backgroundColor: isWeekend ? "#ffe5f0" : "#fff0f5",
                           borderRadius: "10px",
                         }}
                       >
