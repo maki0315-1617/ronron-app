@@ -20,40 +20,39 @@ const App = () => {
   };
 
   return (
-    <div style={{ fontFamily: "sans-serif", padding: "16px" }}>
-      <header style={{ marginBottom: "16px" }}>
-        <h1>ロン君のカレンダー</h1>
+    <div className="container py-3">
+      <header className="mb-3">
+        <h1 className="mb-2">ロン君のカレンダー</h1>
 
-        {/* 黒猫ロン君のイラスト */}
         <img
           src="/ron.png"
           alt="黒猫ロン君"
-          style={{ width: "120px", marginBottom: "12px" }}
+          style={{ width: "120px" }}
+          className="mb-3"
         />
 
-        <nav
-          style={{
-            display: "flex",
-            gap: "8px",
-            marginTop: "8px",
-            alignItems: "center",
-          }}
-        >
-          <button onClick={() => setScreen("calendar")}>カレンダー</button>
-          <button onClick={() => setScreen("register")}>ユーザ登録</button>
-          <button onClick={() => setScreen("profile")}>ログイン</button>
+        <nav className="d-flex gap-2 align-items-center mb-2">
+          <button className="btn btn-primary" onClick={() => setScreen("calendar")}>
+            カレンダー
+          </button>
+          <button className="btn btn-secondary" onClick={() => setScreen("register")}>
+            ユーザ登録
+          </button>
+          <button className="btn btn-info" onClick={() => setScreen("profile")}>
+            ログイン
+          </button>
 
           {user && (
             <button
+              className="btn btn-danger ms-3"
               onClick={handleLogout}
-              style={{ marginLeft: "16px", backgroundColor: "#f44336", color: "#fff" }}
             >
               ログアウト
             </button>
           )}
         </nav>
 
-        <div style={{ marginTop: "8px" }}>
+        <div>
           {user ? (
             <span>ログイン中ユーザ: {user.username}</span>
           ) : (

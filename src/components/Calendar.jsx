@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { loadDayData, saveDayData } from "../utils/storage";
 
 const MIN_YEAR = 2026;
-const MIN_MONTH = 6; // 7月
+const MIN_MONTH = 6;
 const MAX_YEAR = 2030;
-const MAX_MONTH = 11; // 12月
+const MAX_MONTH = 11;
 
 const MARK_OPTIONS = [
   { value: "circle", label: "〇", color: "#4CAF50" },
@@ -13,7 +13,6 @@ const MARK_OPTIONS = [
 ];
 
 const Calendar = ({ currentUser }) => {
-  // 初期表示を当月にする
   const now = new Date();
   let initYear = now.getFullYear();
   let initMonth = now.getMonth();
@@ -31,7 +30,6 @@ const Calendar = ({ currentUser }) => {
   const [month, setMonth] = useState(initMonth);
   const [dayStates, setDayStates] = useState({});
 
-  // Supabase から読み込み
   useEffect(() => {
     if (!currentUser) return;
 
@@ -100,7 +98,6 @@ const Calendar = ({ currentUser }) => {
     }
   };
 
-  // ★ テキスト入力の保存処理
   const handleTextChange = async (dateKey, textValue) => {
     const newState = {
       ...dayStates,
@@ -122,113 +119,126 @@ const Calendar = ({ currentUser }) => {
         {year}年 {month + 1}月
       </h2>
 
-      <div style={{ marginBottom: "8px" }}>
-        <button onClick={() => changeMonth(-1)}>前の月</button>
-        <button onClick={() => changeMonth(1)} style={{ marginLeft: "8px" }}>
+      <div className="mb-3">
+        <button className="btn btn-outline-primary" onClick={() => changeMonth(-1)}>
+          前の月
+        </button>
+        <button
+          className="btn btn-outline-primary ms-2"
+          onClick={() => changeMonth(1)}
+        >
           次の月
         </button>
       </div>
 
-      <table
-        style={{
-          borderCollapse: "collapse",
-          width: "100%",
-          maxWidth: "800px",
-        }}
-      >
-        <thead>
-          <tr>
-            <th>日</th>
-            <th>月</th>
-            <th>火</th>
-            <th>水</th>
-            <th>木</th>
-            <th>金</th>
-            <th>土</th>
-          </tr>
-        </thead>
+      {/* 📱 スマホ縦長（行形式） */}
+      <div className="d-block d-md-none">
+        {cells
+          .filter((d) => d !== null)
+          .map((d) => {
+            const dateKey = formatDateKey(d);
+            const state = dayStates[dateKey] || {};
 
-        <tbody>
-          {Array.from({ length: Math.ceil(cells.length / 7) }).map(
-            (_, rowIndex) => (
-              <tr key={rowIndex}>
-                {cells.slice(rowIndex * 7, rowIndex * 7 + 7).map((d, i) => {
-                  if (!d)
+            return (
+              <div key={d} className="border-bottom py-3">
+                <div className="fw-bold mb-2">{d}日</div>
+
+                <select
+                  className="form-select mb-2"
+                  value={state.mark || ""}
+                  onChange={(e) => handleMarkChange(dateKey, e.target.value)}
+                >
+                  <option value="">未選択</option>
+                  {MARK_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  value={state.text || ""}
+                  onChange={(e) => handleTextChange(dateKey, e.target.value)}
+                  placeholder="テキスト入力"
+                />
+
+                <div className="text-muted">
+                  入力テキスト: {state.text || "未入力"}
+                </div>
+              </div>
+            );
+          })}
+      </div>
+
+      {/* 🖥 PC横長（従来のテーブル） */}
+      <div className="d-none d-md-block">
+        <table className="table table-bordered">
+          <thead>
+            <tr>
+              <th>日</th>
+              <th>月</th>
+              <th>火</th>
+              <th>水</th>
+              <th>木</th>
+              <th>金</th>
+              <th>土</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {Array.from({ length: Math.ceil(cells.length / 7) }).map(
+              (_, rowIndex) => (
+                <tr key={rowIndex}>
+                  {cells.slice(rowIndex * 7, rowIndex * 7 + 7).map((d, i) => {
+                    if (!d)
+                      return <td key={i} className="bg-light" />;
+
+                    const dateKey = formatDateKey(d);
+                    const state = dayStates[dateKey] || {};
+
                     return (
-                      <td
-                        key={i}
-                        style={{
-                          border: "1px solid #ccc",
-                          height: "80px",
-                          backgroundColor: "#f9f9f9",
-                        }}
-                      />
+                      <td key={i} className="align-top">
+                        <div className="fw-bold">{d}</div>
+
+                        <select
+                          className="form-select mt-2"
+                          value={state.mark || ""}
+                          onChange={(e) =>
+                            handleMarkChange(dateKey, e.target.value)
+                          }
+                        >
+                          <option value="">未選択</option>
+                          {MARK_OPTIONS.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+
+                        <input
+                          type="text"
+                          className="form-control mt-2"
+                          value={state.text || ""}
+                          onChange={(e) =>
+                            handleTextChange(dateKey, e.target.value)
+                          }
+                          placeholder="テキスト入力"
+                        />
+
+                        <div className="text-muted mt-2">
+                          入力テキスト: {state.text || "未入力"}
+                        </div>
+                      </td>
                     );
-
-                  const dateKey = formatDateKey(d);
-                  const state = dayStates[dateKey] || {};
-                  const markObj =
-                    MARK_OPTIONS.find((m) => m.value === state.mark) || null;
-
-                  return (
-                    <td
-                      key={i}
-                      style={{
-                        border: "1px solid #ccc",
-                        padding: "4px",
-                        verticalAlign: "top",
-                      }}
-                    >
-                      <div style={{ fontWeight: "bold" }}>{d}</div>
-
-                      <select
-                        value={state.mark || ""}
-                        onChange={(e) =>
-                          handleMarkChange(dateKey, e.target.value)
-                        }
-                        style={{
-                          width: "100%",
-                          backgroundColor: markObj ? markObj.color : "#fff",
-                          color: markObj ? "#fff" : "#000",
-                          marginTop: "4px",
-                        }}
-                      >
-                        <option value="">未選択</option>
-                        {MARK_OPTIONS.map((opt) => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-
-                      {/* ★ テキスト入力欄 */}
-                      <input
-                        type="text"
-                        value={state.text || ""}
-                        onChange={(e) =>
-                          handleTextChange(dateKey, e.target.value)
-                        }
-                        style={{ width: "100%", marginTop: "4px" }}
-                        placeholder="メモを入力"
-                      />
-
-                      <div
-                        style={{
-                          fontSize: "12px",
-                          marginTop: "4px",
-                          color: state.text ? "#000" : "#888",
-                        }}
-                      >
-                        入力テキスト: {state.text || "未入力"}
-                      </div>
-                    </td>
-                  );
-                })}
-              </tr>
-            )
-          )}
-        </tbody>
-      </table>
+                  })}
+                </tr>
+              )
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
