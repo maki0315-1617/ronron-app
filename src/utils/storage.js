@@ -1,7 +1,21 @@
 import { supabase } from "./supabase";
 
-// ユーザ登録
+/* -----------------------------
+   ユーザ登録（重複チェック付き）
+----------------------------- */
 export const registerUser = async (username, password) => {
+  // ① 既存ユーザ名のチェック
+  const { data: existingUser } = await supabase
+    .from("users")
+    .select("id")
+    .eq("username", username)
+    .single();
+
+  if (existingUser) {
+    throw new Error("このユーザ名は既に使われています");
+  }
+
+  // ② 新規登録
   const { data, error } = await supabase
     .from("users")
     .insert([{ username, password }])
@@ -14,7 +28,9 @@ export const registerUser = async (username, password) => {
   return data;
 };
 
-// ログイン
+/* -----------------------------
+   ログイン
+----------------------------- */
 export const loginUser = async (username, password) => {
   const { data, error } = await supabase
     .from("users")
@@ -29,19 +45,25 @@ export const loginUser = async (username, password) => {
   return data;
 };
 
-// ログアウト
+/* -----------------------------
+   ログアウト
+----------------------------- */
 export const logoutUser = () => {
   localStorage.removeItem("current_user");
 };
 
-// 現在ユーザ取得
+/* -----------------------------
+   現在ユーザ取得
+----------------------------- */
 export const getCurrentUser = () => {
   const raw = localStorage.getItem("current_user");
   if (!raw) return null;
   return JSON.parse(raw);
 };
 
-// プロフィール更新（bio と favoriteColor）
+/* -----------------------------
+   プロフィール更新
+----------------------------- */
 export const updateUserProfile = async (userId, { bio, favoriteColor }) => {
   const { data, error } = await supabase
     .from("users")
@@ -58,13 +80,13 @@ export const updateUserProfile = async (userId, { bio, favoriteColor }) => {
     return null;
   }
 
-  // ローカルにも保存（ログイン状態維持）
   localStorage.setItem("current_user", JSON.stringify(data));
-
   return data;
 };
 
-// 日付データ読み込み
+/* -----------------------------
+   日付データ読み込み（ISO形式に統一）
+----------------------------- */
 export const loadDayData = async (userId) => {
   const { data, error } = await supabase
     .from("day_data")
@@ -75,17 +97,21 @@ export const loadDayData = async (userId) => {
 
   const result = {};
   data.forEach((row) => {
-    result[row.date_key] = { mark: row.mark, time: row.time };
+    // Supabase の date 型は "YYYY-MM-DD" で返るのでそのまま使える
+    const normalizedKey = row.date_key; // 例: "2026-07-01"
+    result[normalizedKey] = { mark: row.mark, time: row.time };
   });
 
   return result;
 };
 
-// 日付データ保存
+/* -----------------------------
+   日付データ保存（ISO形式で保存）
+----------------------------- */
 export const saveDayData = async (userId, dayStates) => {
   const rows = Object.entries(dayStates).map(([date_key, v]) => ({
     user_id: userId,
-    date_key,
+    date_key, // "YYYY-MM-DD" 形式で渡すことが重要
     mark: v.mark || null,
     time: v.time || null,
   }));
