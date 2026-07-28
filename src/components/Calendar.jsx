@@ -23,7 +23,7 @@ const Calendar = ({ currentUser }) => {
     initMonth = MIN_MONTH;
   }
   
-  // 最大値より後なら補正
+  // 最大値より後なら補
   if (initYear > MAX_YEAR || (initYear === MAX_YEAR && initMonth > MAX_MONTH)) {
     initYear = MAX_YEAR;
     initMonth = MAX_MONTH;
