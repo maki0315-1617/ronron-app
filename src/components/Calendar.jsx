@@ -6,10 +6,11 @@ const MIN_MONTH = 6;
 const MAX_YEAR = 2030;
 const MAX_MONTH = 11;
 
+// 🎀 絵文字マークに変更
 const MARK_OPTIONS = [
-  { value: "circle", label: "〇", color: "#ffb3c6" },
-  { value: "cross", label: "×", color: "#b3d9ff" },
-  { value: "triangle", label: "△", color: "#ffe5b3" },
+  { value: "paw", label: "🐾", color: "#ffb3c6" },     // ピンク
+  { value: "sleep", label: "💤", color: "#b3d9ff" },   // 水色
+  { value: "clover", label: "🍀", color: "#ffe5b3" },  // クリーム
 ];
 
 const Calendar = ({ currentUser }) => {
