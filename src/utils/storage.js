@@ -1,7 +1,19 @@
 import { supabase } from "./supabase";
 
-// ユーザ登録
+// ユーザ登録（重複チェック付き）
 export const registerUser = async (username, password) => {
+  // ① 既存ユーザチェック
+  const { data: existing, error: checkError } = await supabase
+    .from("users")
+    .select("*")
+    .eq("username", username)
+    .maybeSingle();
+
+  if (existing) {
+    throw new Error("このユーザ名は既に登録されています。");
+  }
+
+  // ② 新規登録
   const { data, error } = await supabase
     .from("users")
     .insert([{ username, password }])
@@ -41,7 +53,7 @@ export const getCurrentUser = () => {
   return JSON.parse(raw);
 };
 
-// プロフィール更新（bio と favoriteColor）
+// プロフィール更新
 export const updateUserProfile = async (userId, { bio, favoriteColor }) => {
   const { data, error } = await supabase
     .from("users")
@@ -58,9 +70,7 @@ export const updateUserProfile = async (userId, { bio, favoriteColor }) => {
     return null;
   }
 
-  // ローカルにも保存（ログイン状態維持）
   localStorage.setItem("current_user", JSON.stringify(data));
-
   return data;
 };
 
@@ -90,9 +100,6 @@ export const saveDayData = async (userId, dayStates) => {
     time: v.time || null,
   }));
 
-  // 既存削除
   await supabase.from("day_data").delete().eq("user_id", userId);
-
-  // 新規保存
   await supabase.from("day_data").insert(rows);
 };

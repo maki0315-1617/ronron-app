@@ -4,28 +4,26 @@ import { getCurrentUser, updateUserProfile, loginUser } from "../utils/storage";
 const UserProfile = ({ currentUser, onLogin }) => {
   const [user, setUser] = useState(currentUser || getCurrentUser());
   const [bio, setBio] = useState(user?.bio || "");
-  const [favoriteColor, setFavoriteColor] = useState(
-    user?.favoriteColor || ""
-  );
+  const [favoriteColor, setFavoriteColor] = useState(user?.favoriteColor || "");
   const [loginName, setLoginName] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleProfileSave = (e) => {
+  const handleProfileSave = async (e) => {
     e.preventDefault();
     if (!user) {
       setMessage("ログインしてください。");
       return;
     }
-    const updated = updateUserProfile(user.id, { bio, favoriteColor });
+    const updated = await updateUserProfile(user.id, { bio, favoriteColor });
     setUser(updated);
     onLogin(updated);
     setMessage("プロフィールを保存しました。");
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const logged = loginUser(loginName, loginPassword);
+    const logged = await loginUser(loginName, loginPassword);
     if (!logged) {
       setMessage("ログイン失敗。ユーザ名/パスワードを確認してください。");
       return;

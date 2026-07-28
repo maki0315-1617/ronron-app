@@ -6,15 +6,22 @@ const UserRegister = ({ onLogin }) => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!username || !password) {
       setMessage("ユーザ名とパスワードを入力してください。");
       return;
     }
-    const user = registerUser(username, password);
-    setMessage("登録しました。ログイン状態になります。");
-    onLogin(user);
+
+    try {
+      const user = await registerUser(username, password);
+      setMessage("登録しました。ログイン状態になります。");
+      onLogin(user);
+    } catch (err) {
+      // ★ 重複登録エラーをここで表示
+      setMessage(err.message);
+    }
   };
 
   return (
@@ -44,7 +51,7 @@ const UserRegister = ({ onLogin }) => {
         <button type="submit">登録</button>
       </form>
 
-      {message && <p>{message}</p>}
+      {message && <p style={{ color: "red" }}>{message}</p>}
     </div>
   );
 };
