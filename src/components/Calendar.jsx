@@ -6,7 +6,7 @@ const MIN_MONTH = 6;
 const MAX_YEAR = 2030;
 const MAX_MONTH = 11;
 
-// 絵文字マーク
+// 絵文字マーク大量追加
 const MARK_OPTIONS = [
   { value: "paw", label: "🐾", color: "#ffb3c6" },
   { value: "sleep", label: "💤", color: "#b3d9ff" },
@@ -21,19 +21,20 @@ const MARK_OPTIONS = [
   { value: "cake", label: "🎂", color: "#ffe5f0" },
 ];
 
-// 季節背景（かわいいイラスト）
+// 季節背景画像
 const SEASON_BG = {
-  spring: "https://cdn.pixabay.com/photo/2017/03/27/14/56/spring-2178728_1280.png",
-  summer: "https://cdn.pixabay.com/photo/2017/07/31/11/21/summer-2552692_1280.png",
-  autumn: "https://cdn.pixabay.com/photo/2016/09/15/15/19/autumn-1673896_1280.png",
-  winter: "https://cdn.pixabay.com/photo/2016/11/29/05/08/snowman-1867221_1280.png",
+  spring: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e",
+  summer: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+  autumn: "https://images.unsplash.com/photo-1501973801540-537f08ccae7b",
+  winter: "https://images.unsplash.com/photo-1518176258769-f227c798150e",
 };
 
+// 月から季節を判定
 const getSeason = (month) => {
-  if (month >= 2 && month <= 4) return "spring";
-  if (month >= 5 && month <= 7) return "summer";
-  if (month >= 8 && month <= 10) return "autumn";
-  return "winter";
+  if (month >= 2 && month <= 4) return "spring"; // 3〜5月
+  if (month >= 5 && month <= 7) return "summer"; // 6〜8月
+  if (month >= 8 && month <= 10) return "autumn"; // 9〜11月
+  return "winter"; // 12〜2月
 };
 
 const Calendar = ({ currentUser }) => {
@@ -142,7 +143,7 @@ const Calendar = ({ currentUser }) => {
   return (
     <div>
       <h2 className="mb-3">
-        ロン君のお世話カレンダー（{year}年 {month + 1}月）
+        {year}年 {month + 1}月（{season}）
       </h2>
 
       <div className="mb-3">
@@ -166,12 +167,10 @@ const Calendar = ({ currentUser }) => {
               key={d}
               className="p-3 mb-3 rounded shadow-sm"
               style={{
-                backgroundImage: bgImage ? `url("${bgImage}")` : "none",
+                backgroundImage: `url(${bgImage})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
                 borderRadius: "15px",
-                minHeight: "180px",
               }}
             >
               <div
@@ -244,7 +243,10 @@ const Calendar = ({ currentUser }) => {
                   {cells.slice(rowIndex * 7, rowIndex * 7 + 7).map((d, i) => {
                     if (!d)
                       return (
-                        <td key={i} style={{ backgroundColor: "#fff0f5" }}></td>
+                        <td
+                          key={i}
+                          style={{ backgroundColor: "#fff0f5" }}
+                        ></td>
                       );
 
                     const dateKey = formatDateKey(d);
@@ -260,13 +262,11 @@ const Calendar = ({ currentUser }) => {
                         key={i}
                         className="p-2"
                         style={{
-                          backgroundImage: bgImage ? `url("${bgImage}")` : "none",
+                          backgroundImage: `url(${bgImage})`,
                           backgroundSize: "cover",
                           backgroundPosition: "center",
-                          backgroundRepeat: "no-repeat",
                           backgroundColor: isWeekend ? "#ffe5f0" : "#fff0f5",
                           borderRadius: "10px",
-                          minHeight: "160px",
                         }}
                       >
                         <div
