@@ -6,7 +6,7 @@ const MIN_MONTH = 6;
 const MAX_YEAR = 2030;
 const MAX_MONTH = 11;
 
-// 絵文字マーク（従来＋追加）
+// 絵文字マーク大量追加
 const MARK_OPTIONS = [
   { value: "paw", label: "🐾", color: "#ffb3c6" },
   { value: "sleep", label: "💤", color: "#b3d9ff" },
@@ -21,15 +21,6 @@ const MARK_OPTIONS = [
   { value: "cake", label: "🎂", color: "#ffe5f0" },
 ];
 
-// よく使うメモ（テンプレート入力ボタン）
-const TEMPLATE_TEXTS = [
-  { label: "🤒 体調が悪い", value: "体調が悪い" },
-  { label: "😴 よく眠れた", value: "よく眠れた" },
-  { label: "🍔 外食した", value: "外食した" },
-  { label: "🎂 誕生日", value: "誕生日" },
-  { label: "🏥 病院へ行った", value: "病院へ行った" },
-];
-
 // 季節背景画像
 const SEASON_BG = {
   spring: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e",
@@ -38,11 +29,12 @@ const SEASON_BG = {
   winter: "https://images.unsplash.com/photo-1518176258769-f227c798150e",
 };
 
+// 月から季節を判定
 const getSeason = (month) => {
-  if (month >= 2 && month <= 4) return "spring";
-  if (month >= 5 && month <= 7) return "summer";
-  if (month >= 8 && month <= 10) return "autumn";
-  return "winter";
+  if (month >= 2 && month <= 4) return "spring"; // 3〜5月
+  if (month >= 5 && month <= 7) return "summer"; // 6〜8月
+  if (month >= 8 && month <= 10) return "autumn"; // 9〜11月
+  return "winter"; // 12〜2月
 };
 
 const Calendar = ({ currentUser }) => {
@@ -213,22 +205,6 @@ const Calendar = ({ currentUser }) => {
                 ))}
               </select>
 
-              <div className="d-flex flex-wrap gap-2 mt-3">
-                {TEMPLATE_TEXTS.map((t) => (
-                  <button
-                    key={t.value}
-                    className="btn btn-outline-secondary"
-                    onClick={() => handleTextChange(dateKey, t.value)}
-                    style={{
-                      borderRadius: "20px",
-                      backgroundColor: "#fff7fb",
-                    }}
-                  >
-                    {t.label}
-                  </button>
-                ))}
-              </div>
-
               <input
                 type="text"
                 className="form-control mt-3"
@@ -267,7 +243,10 @@ const Calendar = ({ currentUser }) => {
                   {cells.slice(rowIndex * 7, rowIndex * 7 + 7).map((d, i) => {
                     if (!d)
                       return (
-                        <td key={i} style={{ backgroundColor: "#fff0f5" }}></td>
+                        <td
+                          key={i}
+                          style={{ backgroundColor: "#fff0f5" }}
+                        ></td>
                       );
 
                     const dateKey = formatDateKey(d);
@@ -323,22 +302,6 @@ const Calendar = ({ currentUser }) => {
                             </option>
                           ))}
                         </select>
-
-                        <div className="d-flex flex-wrap gap-2 mt-2 justify-content-center">
-                          {TEMPLATE_TEXTS.map((t) => (
-                            <button
-                              key={t.value}
-                              className="btn btn-outline-secondary"
-                              onClick={() => handleTextChange(dateKey, t.value)}
-                              style={{
-                                borderRadius: "20px",
-                                backgroundColor: "#fff7fb",
-                              }}
-                            >
-                              {t.label}
-                            </button>
-                          ))}
-                        </div>
 
                         <input
                           type="text"
