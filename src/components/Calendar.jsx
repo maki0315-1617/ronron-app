@@ -6,7 +6,7 @@ const MIN_MONTH = 6;
 const MAX_YEAR = 2030;
 const MAX_MONTH = 11;
 
-// 絵文字マーク大量追加
+// 絵文字マーク（従来＋追加）
 const MARK_OPTIONS = [
   { value: "paw", label: "🐾", color: "#ffb3c6" },
   { value: "sleep", label: "💤", color: "#b3d9ff" },
@@ -14,19 +14,23 @@ const MARK_OPTIONS = [
   { value: "rainbow", label: "🌈", color: "#ffd6ff" },
   { value: "sparkle", label: "✨", color: "#fff7b3" },
   { value: "cat", label: "🐱", color: "#d6eaff" },
+
+  // 食べ物シリーズ
   { value: "food1", label: "🍎", color: "#ffcccc" },
   { value: "food2", label: "🍔🍟", color: "#ffe0b3" },
   { value: "food3", label: "🍓🍰🍫", color: "#ffd6e8" },
+
+  // 病院・ケーキ
   { value: "hospital", label: "🏥", color: "#e0f7ff" },
   { value: "cake", label: "🎂", color: "#ffe5f0" },
 ];
 
-// 季節背景画像
+// 季節背景（かわいいイラスト）
 const SEASON_BG = {
-  spring: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e",
-  summer: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
-  autumn: "https://images.unsplash.com/photo-1501973801540-537f08ccae7b",
-  winter: "https://images.unsplash.com/photo-1518176258769-f227c798150e",
+  spring: "https://cdn.pixabay.com/photo/2017/03/27/14/56/spring-2178728_1280.png",
+  summer: "https://cdn.pixabay.com/photo/2017/07/31/11/21/summer-2552692_1280.png",
+  autumn: "https://cdn.pixabay.com/photo/2016/09/15/15/19/autumn-1673896_1280.png",
+  winter: "https://cdn.pixabay.com/photo/2016/11/29/05/08/snowman-1867221_1280.png",
 };
 
 // 月から季節を判定
@@ -143,7 +147,7 @@ const Calendar = ({ currentUser }) => {
   return (
     <div>
       <h2 className="mb-3">
-        {year}年 {month + 1}月（{season}）
+        ロン君のお世話カレンダー（{year}年 {month + 1}月）
       </h2>
 
       <div className="mb-3">
@@ -243,10 +247,7 @@ const Calendar = ({ currentUser }) => {
                   {cells.slice(rowIndex * 7, rowIndex * 7 + 7).map((d, i) => {
                     if (!d)
                       return (
-                        <td
-                          key={i}
-                          style={{ backgroundColor: "#fff0f5" }}
-                        ></td>
+                        <td key={i} style={{ backgroundColor: "#fff0f5" }}></td>
                       );
 
                     const dateKey = formatDateKey(d);
