@@ -14,13 +14,9 @@ const MARK_OPTIONS = [
   { value: "rainbow", label: "🌈", color: "#ffd6ff" },
   { value: "sparkle", label: "✨", color: "#fff7b3" },
   { value: "cat", label: "🐱", color: "#d6eaff" },
-
-  // 食べ物シリーズ
   { value: "food1", label: "🍎", color: "#ffcccc" },
   { value: "food2", label: "🍔🍟", color: "#ffe0b3" },
   { value: "food3", label: "🍓🍰🍫", color: "#ffd6e8" },
-
-  // 病院・ケーキ
   { value: "hospital", label: "🏥", color: "#e0f7ff" },
   { value: "cake", label: "🎂", color: "#ffe5f0" },
 ];
@@ -34,7 +30,7 @@ const TEMPLATE_TEXTS = [
   { label: "🏥 病院へ行った", value: "病院へ行った" },
 ];
 
-// 季節背景画像（著作権フリー）
+// 季節背景画像
 const SEASON_BG = {
   spring: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e",
   summer: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
@@ -42,12 +38,11 @@ const SEASON_BG = {
   winter: "https://images.unsplash.com/photo-1518176258769-f227c798150e",
 };
 
-// 月から季節を判定
 const getSeason = (month) => {
-  if (month >= 2 && month <= 4) return "spring"; // 3〜5月
-  if (month >= 5 && month <= 7) return "summer"; // 6〜8月
-  if (month >= 8 && month <= 10) return "autumn"; // 9〜11月
-  return "winter"; // 12〜2月
+  if (month >= 2 && month <= 4) return "spring";
+  if (month >= 5 && month <= 7) return "summer";
+  if (month >= 8 && month <= 10) return "autumn";
+  return "winter";
 };
 
 const Calendar = ({ currentUser }) => {
@@ -200,7 +195,6 @@ const Calendar = ({ currentUser }) => {
                 {d}日
               </div>
 
-              {/* 絵文字マーク（従来のセレクト） */}
               <select
                 className="form-select mt-2"
                 value={state.mark || ""}
@@ -219,7 +213,6 @@ const Calendar = ({ currentUser }) => {
                 ))}
               </select>
 
-              {/* 🎀 よく使うメモ（テンプレート入力ボタン） */}
               <div className="d-flex flex-wrap gap-2 mt-3">
                 {TEMPLATE_TEXTS.map((t) => (
                   <button
@@ -236,7 +229,6 @@ const Calendar = ({ currentUser }) => {
                 ))}
               </div>
 
-              {/* text入力欄 */}
               <input
                 type="text"
                 className="form-control mt-3"
@@ -268,3 +260,110 @@ const Calendar = ({ currentUser }) => {
             </tr>
           </thead>
 
+          <tbody>
+            {Array.from({ length: Math.ceil(cells.length / 7) }).map(
+              (_, rowIndex) => (
+                <tr key={rowIndex}>
+                  {cells.slice(rowIndex * 7, rowIndex * 7 + 7).map((d, i) => {
+                    if (!d)
+                      return (
+                        <td key={i} style={{ backgroundColor: "#fff0f5" }}></td>
+                      );
+
+                    const dateKey = formatDateKey(d);
+                    const state = dayStates[dateKey] || {};
+                    const markObj = MARK_OPTIONS.find(
+                      (m) => m.value === state.mark
+                    );
+
+                    const isWeekend = i === 0 || i === 6;
+
+                    return (
+                      <td
+                        key={i}
+                        className="p-2"
+                        style={{
+                          backgroundImage: `url(${bgImage})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          backgroundColor: isWeekend ? "#ffe5f0" : "#fff0f5",
+                          borderRadius: "10px",
+                        }}
+                      >
+                        <div
+                          className="fw-bold mb-2"
+                          style={{
+                            fontSize: "1.2rem",
+                            backgroundColor: "#ffb3c6",
+                            color: "white",
+                            width: "40px",
+                            margin: "0 auto",
+                            borderRadius: "50px",
+                          }}
+                        >
+                          {d}
+                        </div>
+
+                        <select
+                          className="form-select mt-2"
+                          value={state.mark || ""}
+                          onChange={(e) =>
+                            handleMarkChange(dateKey, e.target.value)
+                          }
+                          style={{
+                            backgroundColor: markObj ? markObj.color : "white",
+                            borderRadius: "20px",
+                            padding: "10px",
+                          }}
+                        >
+                          <option value="">未選択</option>
+                          {MARK_OPTIONS.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+
+                        <div className="d-flex flex-wrap gap-2 mt-2 justify-content-center">
+                          {TEMPLATE_TEXTS.map((t) => (
+                            <button
+                              key={t.value}
+                              className="btn btn-outline-secondary"
+                              onClick={() => handleTextChange(dateKey, t.value)}
+                              style={{
+                                borderRadius: "20px",
+                                backgroundColor: "#fff7fb",
+                              }}
+                            >
+                              {t.label}
+                            </button>
+                          ))}
+                        </div>
+
+                        <input
+                          type="text"
+                          className="form-control mt-2"
+                          value={state.text || ""}
+                          onChange={(e) =>
+                            handleTextChange(dateKey, e.target.value)
+                          }
+                          placeholder="メモを書く"
+                          style={{
+                            borderRadius: "15px",
+                            backgroundColor: "#ffffff",
+                          }}
+                        />
+                      </td>
+                    );
+                  })}
+                </tr>
+              )
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export default Calendar;
