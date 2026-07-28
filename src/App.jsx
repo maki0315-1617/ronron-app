@@ -41,7 +41,7 @@ const App = () => {
         >
           <button onClick={() => setScreen("calendar")}>カレンダー</button>
           <button onClick={() => setScreen("register")}>ユーザ登録</button>
-          <button onClick={() => setScreen("profile")}>ユーザ入力</button>
+          <button onClick={() => setScreen("profile")}>ログイン</button>
 
           {user && (
             <button
