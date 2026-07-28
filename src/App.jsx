@@ -22,7 +22,7 @@ const App = () => {
   return (
     <div className="container py-3">
       <header className="mb-3">
-        <h1 className="mb-2">ロン君のカレンダー</h1>
+        <h1 className="mb-2">ロン君のお世話カレンダー</h1>
 
         <img
           src="/ron.png"
