@@ -1,50 +1,52 @@
 import React, { useState } from "react";
 import { registerUser } from "../utils/storage";
 
-export default function UserRegister({ onLogin }) {
+const UserRegister = ({ onLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [message, setMessage] = useState("");
 
-  const handleRegister = async () => {
-    setErrorMessage("");
-
-    try {
-      const user = await registerUser(username, password);
-      onLogin(user);
-    } catch (err) {
-      setErrorMessage(err.message);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!username || !password) {
+      setMessage("ユーザ名とパスワードを入力してください。");
+      return;
     }
+    const user = registerUser(username, password);
+    setMessage("登録しました。ログイン状態になります。");
+    onLogin(user);
   };
 
   return (
     <div>
-      <h2>ユーザ登録</h2>
+      <h2>ユーザ登録画面</h2>
+      <form onSubmit={handleSubmit} style={{ maxWidth: "400px" }}>
+        <label>
+          ユーザ名:
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            style={{ width: "100%" }}
+          />
+        </label>
 
-      <div>
-        <label>ユーザ名：</label>
-        <input
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
+        <label>
+          パスワード:
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={{ width: "100%" }}
+          />
+        </label>
 
-      <div>
-        <label>パスワード：</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
+        <button type="submit">登録</button>
+      </form>
 
-      <button onClick={handleRegister}>登録</button>
-
-      {errorMessage && (
-        <p style={{ color: "red", marginTop: "10px" }}>
-          {errorMessage}
-        </p>
-      )}
+      {message && <p>{message}</p>}
     </div>
   );
-}
+};
+
+export default UserRegister;
